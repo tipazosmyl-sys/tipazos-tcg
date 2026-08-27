@@ -1,0 +1,23 @@
+{
+  "name": "Tipazos TCG",
+  "short_name": "Tipazos",
+  "start_url": "https://script.google.com/macros/s/AKfycbzahT0z2qJxBndVr-65a0LSDcj0rrcbo790wCohw25SEEshd6BEUW22D8AwrWXNl3TZ/exec",
+  "display": "standalone",
+  "orientation": "portrait",
+  "background_color": "#0f0c29",
+  "theme_color": "#e94560",
+  "icons": [
+    {
+      "src": "https://i.postimg.cc/N5GHHFx3/Tipazos-sin-fondo.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any maskable"
+    },
+    {
+      "src": "https://i.postimg.cc/N5GHHFx3/Tipazos-sin-fondo.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any maskable"
+    }
+  ]
+}
