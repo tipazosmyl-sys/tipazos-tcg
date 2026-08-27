@@ -1,0 +1,1402 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <base target="_top">
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  
+  <title>🔐 Tipazos TCG - Login</title>
+  
+  <style>
+    /* ===== ESTILOS GENERALES ===== */
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    
+    body {
+      font-family: 'Segoe UI', -apple-system, BlinkMacSystemFont, sans-serif;
+      background: #0f0c29;
+      color: #eee;
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+    
+    /* ===== PANTALLA DE LOGIN ===== */
+    #loginScreen {
+      width: 100%;
+      max-width: 400px;
+      padding: 30px 24px;
+      background: #16213e;
+      border-radius: 16px;
+      border: 1px solid rgba(233, 69, 96, 0.2);
+      box-shadow: 0 20px 60px rgba(0,0,0,0.5);
+      margin: 20px;
+      display: block;
+    }
+    
+    #loginScreen .logo {
+      width: 72px;
+      height: 72px;
+      border-radius: 16px;
+      border: 2px solid #e94560;
+      padding: 12px;
+      background: #0f0c29;
+      margin: 0 auto 16px;
+      display: block;
+      object-fit: cover;
+    }
+    
+    #loginScreen h1 {
+      text-align: center;
+      color: #e94560;
+      font-size: 24px;
+      margin-bottom: 4px;
+    }
+    
+    #loginScreen .subtitle {
+      text-align: center;
+      color: #888;
+      font-size: 13px;
+      margin-bottom: 24px;
+    }
+    
+    #loginScreen .subtitle span {
+      color: #f5a623;
+    }
+    
+    #loginScreen label {
+      display: block;
+      color: #888;
+      font-size: 12px;
+      font-weight: 600;
+      margin-bottom: 4px;
+      margin-top: 8px;
+    }
+    
+    #loginScreen input {
+      width: 100%;
+      padding: 12px 14px;
+      border: 2px solid #333;
+      border-radius: 8px;
+      background: #0f0c29;
+      color: #eee;
+      font-size: 14px;
+      transition: border-color 0.3s;
+    }
+    
+    #loginScreen input:focus {
+      outline: none;
+      border-color: #e94560;
+    }
+    
+    #loginScreen .btn {
+      width: 100%;
+      padding: 12px;
+      background: #e94560;
+      color: white;
+      border: none;
+      border-radius: 8px;
+      font-size: 16px;
+      font-weight: bold;
+      cursor: pointer;
+      transition: transform 0.2s, background 0.2s;
+      margin-top: 16px;
+    }
+    
+    #loginScreen .btn:active {
+      transform: scale(0.97);
+    }
+    
+    #loginScreen .btn:disabled {
+      opacity: 0.6;
+      cursor: not-allowed;
+    }
+    
+    #loginScreen .error {
+      background: rgba(231, 76, 60, 0.15);
+      border: 1px solid #e74c3c;
+      color: #e74c3c;
+      padding: 10px;
+      border-radius: 6px;
+      font-size: 13px;
+      text-align: center;
+      margin-bottom: 16px;
+      display: none;
+    }
+    
+    #loginScreen .error.show {
+      display: block;
+    }
+    
+    #loginScreen .footer {
+      text-align: center;
+      color: #555;
+      font-size: 10px;
+      margin-top: 20px;
+      border-top: 1px solid #222;
+      padding-top: 16px;
+    }
+    
+    #loginScreen .version {
+      text-align: center;
+      color: #444;
+      font-size: 9px;
+      margin-top: 8px;
+    }
+    
+    /* ===== APLICACIÓN (se muestra tras login) ===== */
+    #appContainer {
+      display: none;
+      width: 100%;
+      height: 100vh;
+      height: 100dvh;
+      flex-direction: column;
+      background: #0f0c29;
+    }
+    
+    /* ===== BARRA SUPERIOR ===== */
+    .app-header {
+      background: linear-gradient(135deg, #1a1a2e, #16213e);
+      padding: 10px 16px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      border-bottom: 2px solid #e94560;
+      flex-shrink: 0;
+      min-height: 56px;
+    }
+    
+    .app-header .logo {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+    
+    .app-header .logo img {
+      width: 32px;
+      height: 32px;
+      border-radius: 8px;
+      border: 2px solid #e94560;
+      object-fit: cover;
+    }
+    
+    .app-header .logo h1 {
+      font-size: 18px;
+      color: #e94560;
+      font-weight: bold;
+    }
+    
+    .app-header .logo span {
+      font-size: 10px;
+      color: #f5a623;
+    }
+    
+    .app-header .user-info {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+    
+    .app-header .user-info .username {
+      font-size: 12px;
+      color: #888;
+    }
+    
+    .app-header .user-info .logout-btn {
+      background: #e94560;
+      color: white;
+      border: none;
+      padding: 4px 12px;
+      border-radius: 6px;
+      font-size: 11px;
+      cursor: pointer;
+      font-weight: bold;
+    }
+    
+    .app-header .user-info .logout-btn:active {
+      transform: scale(0.95);
+    }
+    
+    /* ===== CONTENEDOR PRINCIPAL ===== */
+    .app-body {
+      flex: 1;
+      overflow-y: auto;
+      padding: 12px 16px 80px;
+      max-width: 480px;
+      width: 100%;
+      margin: 0 auto;
+    }
+    
+    /* ===== FOOTER ===== */
+    .app-footer {
+      position: fixed;
+      bottom: 0;
+      left: 0;
+      right: 0;
+      background: #1a1a2e;
+      padding: 8px 16px;
+      text-align: center;
+      border-top: 1px solid #333;
+      font-size: 9px;
+      color: #555;
+      z-index: 100;
+    }
+    
+    .app-footer strong {
+      color: #e94560;
+    }
+    
+    /* ===== TARJETA DE BIENVENIDA ===== */
+    .welcome-card {
+      background: linear-gradient(135deg, #16213e, #1a1a2e);
+      border-radius: 14px;
+      padding: 16px;
+      margin-bottom: 16px;
+      border: 1px solid rgba(233,69,96,0.2);
+      text-align: center;
+    }
+    
+    .welcome-card h2 {
+      color: #f5a623;
+      font-size: 16px;
+    }
+    
+    .welcome-card p {
+      color: #888;
+      font-size: 12px;
+      margin-top: 4px;
+    }
+    
+    .welcome-card .stats {
+      display: flex;
+      justify-content: center;
+      gap: 16px;
+      margin-top: 10px;
+    }
+    
+    .welcome-card .stats .stat {
+      text-align: center;
+    }
+    
+    .welcome-card .stats .stat .num {
+      font-size: 20px;
+      font-weight: bold;
+      color: #e94560;
+    }
+    
+    .welcome-card .stats .stat .label {
+      font-size: 10px;
+      color: #666;
+    }
+    
+    /* ===== MENÚ DE BOTONES ===== */
+    .grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 8px;
+    }
+    
+    .grid .btn {
+      background: #16213e;
+      border: 1px solid #333;
+      border-radius: 12px;
+      padding: 14px 10px;
+      text-align: center;
+      cursor: pointer;
+      transition: all 0.2s ease;
+      user-select: none;
+      min-height: 70px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+    }
+    
+    .grid .btn:active {
+      transform: scale(0.95);
+      background: #1a1a2e;
+    }
+    
+    .grid .btn .icon {
+      font-size: 28px;
+      margin-bottom: 4px;
+    }
+    
+    .grid .btn .label {
+      font-size: 11px;
+      font-weight: 600;
+      color: #eee;
+    }
+    
+    .grid .btn .sub {
+      font-size: 9px;
+      color: #666;
+      margin-top: 2px;
+    }
+    
+    .btn-red { border-color: #e94560; }
+    .btn-red .icon { color: #e94560; }
+    .btn-gold { border-color: #f5a623; }
+    .btn-gold .icon { color: #f5a623; }
+    .btn-green { border-color: #2ecc71; }
+    .btn-green .icon { color: #2ecc71; }
+    .btn-blue { border-color: #3498db; }
+    .btn-blue .icon { color: #3498db; }
+    .btn-purple { border-color: #9b59b6; }
+    .btn-purple .icon { color: #9b59b6; }
+    .btn-cyan { border-color: #1abc9c; }
+    .btn-cyan .icon { color: #1abc9c; }
+    .btn-orange { border-color: #e67e22; }
+    .btn-orange .icon { color: #e67e22; }
+    .btn-danger { border-color: #e74c3c; }
+    .btn-danger .icon { color: #e74c3c; }
+    
+    .btn-full {
+      grid-column: 1 / -1;
+    }
+    
+    /* ===== PANELES ===== */
+    .panel {
+      display: none;
+      background: #16213e;
+      border-radius: 14px;
+      padding: 16px;
+      margin-bottom: 16px;
+      border: 1px solid rgba(233,69,96,0.2);
+    }
+    
+    .panel.active {
+      display: block;
+    }
+    
+    .panel-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 12px;
+      flex-wrap: wrap;
+      gap: 8px;
+    }
+    
+    .panel-header h2 {
+      margin: 0;
+      font-size: 18px;
+    }
+    
+    .panel-header .panel-title-red { color: #e94560; }
+    .panel-header .panel-title-gold { color: #f5a623; }
+    .panel-header .panel-title-green { color: #2ecc71; }
+    .panel-header .panel-title-blue { color: #3498db; }
+    .panel-header .panel-title-purple { color: #9b59b6; }
+    .panel-header .panel-title-cyan { color: #1abc9c; }
+    .panel-header .panel-title-orange { color: #e67e22; }
+    
+    .btn-volver-menu {
+      background: #555;
+      color: white;
+      border: none;
+      padding: 10px;
+      border-radius: 10px;
+      cursor: pointer;
+      font-size: 14px;
+      font-weight: bold;
+      width: 100%;
+      margin-top: 12px;
+    }
+    
+    .btn-volver-menu:active {
+      transform: scale(0.97);
+    }
+    
+    .panel input {
+      width: 100%;
+      padding: 10px;
+      margin: 4px 0;
+      border: 2px solid #333;
+      border-radius: 8px;
+      background: #0f3460;
+      color: #eee;
+      font-size: 14px;
+    }
+    
+    .panel input:focus {
+      outline: none;
+      border-color: #e94560;
+    }
+    
+    .panel .btn {
+      background: #e94560;
+      color: white;
+      border: none;
+      padding: 10px;
+      border-radius: 8px;
+      cursor: pointer;
+      font-size: 14px;
+      font-weight: bold;
+      width: 100%;
+      margin: 4px 0;
+    }
+    
+    .panel .btn:active {
+      transform: scale(0.97);
+    }
+    
+    .panel .btn-success {
+      background: #2ecc71;
+    }
+    
+    .panel .btn-info {
+      background: #3498db;
+    }
+    
+    .panel .btn-peligro {
+      background: #e74c3c;
+    }
+    
+    .panel .btn-cancelar {
+      background: #555;
+    }
+    
+    .panel .jugador-item {
+      background: #0f3460;
+      padding: 8px 12px;
+      margin: 4px 0;
+      border-radius: 6px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      border-left: 3px solid #e94560;
+      text-align: left;
+    }
+    
+    .panel .jugador-nombre {
+      font-size: 13px;
+      font-weight: 600;
+    }
+    
+    .panel .jugador-deck {
+      color: #888;
+      font-size: 10px;
+      margin-left: 4px;
+    }
+    
+    .panel .eliminar {
+      color: #e94560;
+      cursor: pointer;
+      font-size: 16px;
+      padding: 0 6px;
+      font-weight: bold;
+    }
+    
+    .panel .vacio {
+      color: #666;
+      text-align: center;
+      padding: 16px;
+      font-size: 12px;
+    }
+    
+    .panel .row {
+      display: flex;
+      gap: 6px;
+    }
+    
+    .panel .row .btn {
+      flex: 1;
+    }
+    
+    .panel .mensaje {
+      padding: 10px;
+      border-radius: 6px;
+      margin: 8px 0;
+      display: none;
+      font-size: 13px;
+    }
+    
+    .panel .mensaje-exito {
+      background: rgba(46,204,113,0.15);
+      border: 1px solid #2ecc71;
+      color: #2ecc71;
+    }
+    
+    .panel .mensaje-error {
+      background: rgba(231,76,60,0.15);
+      border: 1px solid #e74c3c;
+      color: #e74c3c;
+    }
+    
+    .panel .mensaje-info {
+      background: rgba(52,152,219,0.15);
+      border: 1px solid #3498db;
+      color: #3498db;
+    }
+    
+    .panel .mensaje.show {
+      display: block;
+    }
+    
+    .panel .partida {
+      background: #0f3460;
+      padding: 10px;
+      margin: 6px 0;
+      border-radius: 8px;
+      border-left: 3px solid #e94560;
+    }
+    
+    .panel .partida-header {
+      display: flex;
+      justify-content: space-between;
+      font-size: 11px;
+      color: #888;
+      margin-bottom: 4px;
+    }
+    
+    .panel .vs-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin: 4px 0;
+    }
+    
+    .panel .vs-row .player {
+      font-weight: 600;
+      font-size: 13px;
+      flex: 1;
+      text-align: center;
+    }
+    
+    .panel .vs-row .vs {
+      color: #e94560;
+      font-weight: bold;
+      padding: 0 4px;
+      font-size: 12px;
+    }
+    
+    .panel .games-row {
+      display: flex;
+      gap: 4px;
+    }
+    
+    .panel .games-row input {
+      flex: 1;
+      text-align: center;
+      font-size: 14px;
+      font-weight: bold;
+    }
+    
+    .panel select {
+      width: 100%;
+      padding: 8px;
+      margin: 4px 0;
+      border: 2px solid #333;
+      border-radius: 6px;
+      background: #0f3460;
+      color: #eee;
+      font-size: 13px;
+    }
+    
+    .panel-content {
+      max-height: 500px;
+      overflow-y: auto;
+    }
+    
+    .panel-content table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 13px;
+    }
+    
+    .panel-content th {
+      padding: 8px 4px;
+      text-align: center;
+      color: #f5a623;
+      background: #1a1a2e;
+      border-bottom: 2px solid #e94560;
+      position: sticky;
+      top: 0;
+      z-index: 10;
+    }
+    
+    .panel-content td {
+      padding: 6px 4px;
+      border-bottom: 1px solid #333;
+      vertical-align: middle;
+    }
+    
+    .panel-content .text-left { text-align: left; }
+    .panel-content .text-center { text-align: center; }
+    .panel-content .lider { color: #f5a623; font-weight: bold; }
+    .panel-content .medalla { font-size: 18px; }
+    
+    .panel-content .stats-pie {
+      margin-top: 12px;
+      padding: 10px;
+      background: #0f3460;
+      border-radius: 8px;
+      text-align: center;
+      font-size: 12px;
+      color: #888;
+    }
+    
+    .panel-content .grid-stats {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 8px;
+      margin: 8px 0;
+    }
+    
+    .panel-content .stat-card {
+      background: #0f3460;
+      border-radius: 8px;
+      padding: 12px;
+      text-align: center;
+      border: 1px solid #333;
+    }
+    
+    .panel-content .stat-card .num {
+      font-size: 24px;
+      font-weight: bold;
+      color: #e94560;
+    }
+    
+    .panel-content .stat-card .label {
+      font-size: 10px;
+      color: #888;
+      margin-top: 2px;
+    }
+    
+    .panel-content .mazo-item {
+      background: #0f3460;
+      padding: 8px 12px;
+      margin: 4px 0;
+      border-radius: 6px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      border-left: 3px solid #e94560;
+      font-size: 13px;
+    }
+    
+    .panel-content .mazo-item .mazo-nombre { font-weight: 600; }
+    .panel-content .mazo-item .mazo-cantidad { color: #f5a623; }
+    
+    .panel-content .premio-item {
+      background: #0f3460;
+      padding: 6px 10px;
+      margin: 3px 0;
+      border-radius: 6px;
+      border-left: 3px solid #f5a623;
+      font-size: 13px;
+    }
+    
+    .panel-content .campeon-box {
+      background: #f5a623;
+      color: #1a1a2e;
+      border-radius: 8px;
+      padding: 10px;
+      text-align: center;
+      font-weight: bold;
+      font-size: 16px;
+      margin: 8px 0;
+    }
+    
+    .panel-content .ronda-contenido {
+      white-space: pre-wrap;
+      font-family: monospace;
+      font-size: 13px;
+      color: #eee;
+      background: #0f3460;
+      padding: 12px;
+      border-radius: 8px;
+      margin: 0;
+    }
+    
+    .hidden {
+      display: none !important;
+    }
+    
+    @media (max-width: 380px) {
+      .app-header .logo h1 { font-size: 15px; }
+      .grid .btn { min-height: 60px; padding: 10px 8px; }
+      .grid .btn .icon { font-size: 22px; }
+      .grid .btn .label { font-size: 10px; }
+      .panel-content table { font-size: 11px; }
+      .panel-content th, .panel-content td { padding: 4px 2px; }
+      .panel-header h2 { font-size: 15px; }
+    }
+  </style>
+</head>
+<body>
+
+<!-- ===== PANTALLA DE LOGIN ===== -->
+<div id="loginScreen">
+  <img src="https://i.postimg.cc/N5GHHFx3/Tipazos-sin-fondo.png" 
+       alt="Tipazos TCG" 
+       class="logo"
+       onerror="this.src='data:image/svg+xml,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 width=%2272%22 height=%2272%22 viewBox=%220 0 72 72%22%3E%3Crect width=%2272%22 height=%2272%22 rx=%2216%22 fill=%22%230f0c29%22/%3E%3Ctext x=%2236%22 y=%2248%22 text-anchor=%22middle%22 font-size=%2236%22%3E🏆%3C/text%3E%3C/svg%3E'">
+  
+  <h1>🏆 Tipazos TCG</h1>
+  <p class="subtitle">Gestor de Torneos · <span>Sistema Suizo</span></p>
+  
+  <div id="loginError" class="error">❌ Usuario o contraseña incorrectos</div>
+  
+  <form id="loginForm" onsubmit="return false;">
+    <label for="usuario">👤 USUARIO</label>
+    <input type="text" id="usuario" placeholder="Ingresa tu usuario" autofocus>
+    
+    <label for="clave">🔑 CONTRASEÑA</label>
+    <input type="password" id="clave" placeholder="Ingresa tu contraseña">
+    
+    <button type="submit" class="btn" id="btnLogin" onclick="iniciarSesion()">
+      🚀 Ingresar
+    </button>
+  </form>
+  
+  <div class="footer">⚡ <a href="#">Tipazos TCG</a> · Acceso restringido</div>
+  <div class="version">v2.0 · Solo usuarios autorizados</div>
+</div>
+
+<!-- ===== APLICACIÓN PRINCIPAL (se muestra tras login) ===== -->
+<div id="appContainer">
+  
+  <!-- Barra superior -->
+  <div class="app-header">
+    <div class="logo">
+      <img src="https://i.postimg.cc/N5GHHFx3/Tipazos-sin-fondo.png" alt="Logo" onerror="this.style.display='none'">
+      <div>
+        <h1>Tipazos</h1>
+        <span>TCG Chile</span>
+      </div>
+    </div>
+    <div class="user-info">
+      <span class="username" id="currentUser">👤 Usuario</span>
+      <button class="logout-btn" onclick="cerrarSesion()">✖ Salir</button>
+    </div>
+  </div>
+  
+  <!-- Cuerpo de la app -->
+  <div class="app-body" id="appBody">
+    
+    <!-- Menú principal -->
+    <div id="menuPrincipal">
+      <div class="welcome-card">
+        <h2>🎯 ¡Bienvenido!</h2>
+        <p>Selecciona una opción para gestionar tu torneo</p>
+        <div class="stats" id="stats">
+          <div class="stat">
+            <div class="num" id="jugadoresCount">0</div>
+            <div class="label">Jugadores</div>
+          </div>
+          <div class="stat">
+            <div class="num" id="partidasCount">0</div>
+            <div class="label">Partidas</div>
+          </div>
+          <div class="stat">
+            <div class="num" id="rondaCount">0</div>
+            <div class="label">Ronda</div>
+          </div>
+        </div>
+      </div>
+      
+      <div class="grid">
+        <div class="btn btn-red" onclick="mostrarPanel('registro')">
+          <span class="icon">📋</span>
+          <span class="label">Registrar</span>
+          <span class="sub">Jugadores</span>
+        </div>
+        
+        <div class="btn btn-gold" onclick="mostrarPanel('ronda')">
+          <span class="icon">🔀</span>
+          <span class="label">Generar</span>
+          <span class="sub">Ronda</span>
+        </div>
+        
+        <div class="btn btn-blue" onclick="mostrarPanel('resultados')">
+          <span class="icon">📊</span>
+          <span class="label">Resultados</span>
+          <span class="sub">Registrar</span>
+        </div>
+        
+        <div class="btn btn-green" onclick="mostrarPanel('clasificacion')">
+          <span class="icon">🏆</span>
+          <span class="label">Clasificación</span>
+          <span class="sub">Ver</span>
+        </div>
+        
+        <div class="btn btn-purple" onclick="mostrarPanel('dashboard')">
+          <span class="icon">📊</span>
+          <span class="label">Dashboard</span>
+          <span class="sub">Móvil</span>
+        </div>
+        
+        <div class="btn btn-cyan" onclick="mostrarPanel('mazos')">
+          <span class="icon">🃏</span>
+          <span class="label">Mazos</span>
+          <span class="sub">Estadísticas</span>
+        </div>
+        
+        <div class="btn btn-orange btn-full" onclick="mostrarPanel('cierre')">
+          <span class="icon">🎉</span>
+          <span class="label">Cierre de Torneo</span>
+          <span class="sub">Resumen final</span>
+        </div>
+        
+        <div class="btn btn-danger btn-full" onclick="mostrarPanel('reinicio')">
+          <span class="icon">🔄</span>
+          <span class="label">Reiniciar Torneo</span>
+          <span class="sub">Eliminar todos los datos</span>
+        </div>
+      </div>
+    </div>
+    
+    <!-- Paneles -->
+    <div id="panelRegistro" class="panel">
+      <div class="panel-header"><h2 class="panel-title-red">📋 Registrar Jugadores</h2></div>
+      <div id="mensajeRegistro" class="mensaje"></div>
+      <input type="text" id="nombreJugador" placeholder="Nombre del jugador">
+      <input type="text" id="deckJugador" placeholder="Deck / Arquetipo">
+      <button class="btn" onclick="agregarJugador()">➕ Agregar</button>
+      <hr style="border-color:#333;margin:10px 0;">
+      <div style="text-align:left;font-size:12px;color:#f5a623;">🎯 Jugadores (<span id="contadorJugadores">0</span>)</div>
+      <div id="listaJugadores"></div>
+      <div class="row">
+        <button class="btn btn-success" onclick="guardarJugadores()">✅ Guardar</button>
+        <button class="btn btn-info" onclick="cargarEjemploJugadores()">📝 Ejemplo</button>
+      </div>
+      <button class="btn-volver-menu" onclick="cerrarPanel('panelRegistro')">✖ Volver al menú</button>
+    </div>
+    
+    <div id="panelRonda" class="panel">
+      <div class="panel-header"><h2 class="panel-title-gold">🔀 Generar Ronda</h2></div>
+      <div id="mensajeRonda" class="mensaje"></div>
+      <div id="contenidoRonda" class="panel-content"><div style="text-align:center;padding:20px;color:#888;">⏳ Cargando...</div></div>
+      <button class="btn btn-success" onclick="generarRonda()">🔀 Generar Ronda</button>
+      <button class="btn-volver-menu" onclick="cerrarPanel('panelRonda')">✖ Volver al menú</button>
+    </div>
+    
+    <div id="panelResultados" class="panel">
+      <div class="panel-header"><h2 class="panel-title-blue">📊 Registrar Resultados</h2></div>
+      <p style="color:#888;text-align:center;font-size:12px;">⚡ 3pts Victoria | 1pt Empate</p>
+      <div id="mensajeResultados" class="mensaje"></div>
+      <div id="listaPartidas" class="panel-content"></div>
+      <button class="btn-volver-menu" onclick="cerrarPanel('panelResultados')">✖ Volver al menú</button>
+    </div>
+    
+    <div id="panelClasificacion" class="panel">
+      <div class="panel-header"><h2 class="panel-title-green">🏆 Clasificación del Torneo</h2></div>
+      <div id="contenidoClasificacion" class="panel-content"><div style="text-align:center;padding:20px;color:#888;">⏳ Cargando...</div></div>
+      <button class="btn-volver-menu" onclick="cerrarPanel('panelClasificacion')">✖ Volver al menú</button>
+    </div>
+    
+    <div id="panelDashboard" class="panel">
+      <div class="panel-header"><h2 class="panel-title-purple">📊 Dashboard Móvil</h2></div>
+      <div id="contenidoDashboard" class="panel-content"><div style="text-align:center;padding:20px;color:#888;">⏳ Cargando...</div></div>
+      <button class="btn-volver-menu" onclick="cerrarPanel('panelDashboard')">✖ Volver al menú</button>
+    </div>
+    
+    <div id="panelMazos" class="panel">
+      <div class="panel-header"><h2 class="panel-title-cyan">🃏 Estadísticas de Mazos</h2></div>
+      <div id="contenidoMazos" class="panel-content"><div style="text-align:center;padding:20px;color:#888;">⏳ Cargando...</div></div>
+      <button class="btn-volver-menu" onclick="cerrarPanel('panelMazos')">✖ Volver al menú</button>
+    </div>
+    
+    <div id="panelCierre" class="panel">
+      <div class="panel-header"><h2 class="panel-title-orange">🎉 Cierre de Torneo</h2></div>
+      <div id="contenidoCierre" class="panel-content"><div style="text-align:center;padding:20px;color:#888;">⏳ Cargando...</div></div>
+      <button class="btn-volver-menu" onclick="cerrarPanel('panelCierre')">✖ Volver al menú</button>
+    </div>
+    
+    <div id="panelReinicio" class="panel">
+      <div class="panel-header"><h2 class="panel-title-red">🔄 Reiniciar Torneo</h2></div>
+      <div id="contenidoReinicio" class="panel-content">
+        <div style="text-align:center;padding:20px;color:#f5a623;">⚠️ ¿Estás seguro?</div>
+        <div style="text-align:center;color:#888;font-size:13px;margin:10px 0;">Se eliminarán TODOS los datos.</div>
+        <div style="display:flex;gap:8px;">
+          <button class="btn btn-peligro" onclick="ejecutarReinicio()" style="flex:1;">✅ Sí, Reiniciar</button>
+          <button class="btn btn-cancelar" onclick="cerrarPanel('panelReinicio')" style="flex:1;">✖ Cancelar</button>
+        </div>
+      </div>
+      <button class="btn-volver-menu" onclick="cerrarPanel('panelReinicio')">✖ Volver al menú</button>
+    </div>
+    
+  </div>
+  
+  <!-- Footer -->
+  <div class="app-footer">
+    ⚡ <strong>Team Tipazos</strong> - TCG Chile ⚡
+  </div>
+</div>
+
+<script>
+  // ===== VARIABLES GLOBALES =====
+  var jugadores = [];
+  var partidasPendientes = [];
+  var usuarioActual = '';
+  
+  // ===== FUNCIONES DE LOGIN =====
+  function iniciarSesion() {
+    var usuario = document.getElementById('usuario').value.trim();
+    var clave = document.getElementById('clave').value.trim();
+    var btn = document.getElementById('btnLogin');
+    var error = document.getElementById('loginError');
+    
+    if (!usuario || !clave) {
+      error.textContent = '⚠️ Completa todos los campos';
+      error.className = 'error show';
+      return;
+    }
+    
+    btn.disabled = true;
+    btn.textContent = '⏳ Verificando...';
+    error.className = 'error';
+    
+    google.script.run
+      .withSuccessHandler(function(respuesta) {
+        btn.disabled = false;
+        btn.textContent = '🚀 Ingresar';
+        
+        if (respuesta.exito) {
+          usuarioActual = usuario;
+          document.getElementById('loginScreen').style.display = 'none';
+          document.getElementById('appContainer').style.display = 'flex';
+          document.getElementById('currentUser').textContent = '👤 ' + usuario;
+          actualizarStats();
+          setInterval(actualizarStats, 30000);
+        } else {
+          error.textContent = respuesta.mensaje;
+          error.className = 'error show';
+          document.getElementById('clave').value = '';
+          document.getElementById('clave').focus();
+        }
+      })
+      .withFailureHandler(function(err) {
+        btn.disabled = false;
+        btn.textContent = '🚀 Ingresar';
+        error.textContent = '❌ Error de conexión: ' + err.message;
+        error.className = 'error show';
+      })
+      .verificarUsuario(usuario, clave);
+  }
+  
+  function cerrarSesion() {
+    if (confirm('¿Cerrar sesión?')) {
+      document.getElementById('appContainer').style.display = 'none';
+      document.getElementById('loginScreen').style.display = 'block';
+      document.getElementById('usuario').value = '';
+      document.getElementById('clave').value = '';
+      document.getElementById('usuario').focus();
+    }
+  }
+  
+  // Permitir Enter para enviar
+  document.addEventListener('keydown', function(e) {
+    if (e.key === 'Enter') {
+      var usuario = document.getElementById('usuario');
+      var clave = document.getElementById('clave');
+      if (document.activeElement === usuario || document.activeElement === clave) {
+        iniciarSesion();
+      }
+    }
+  });
+  
+  // ===== FUNCIONES DE UTILIDAD =====
+  function mostrarToast(msg) {
+    var toast = document.getElementById('toast');
+    if (!toast) {
+      var t = document.createElement('div');
+      t.id = 'toast';
+      t.style.cssText = 'position:fixed;bottom:70px;left:50%;transform:translateX(-50%);background:rgba(0,0,0,0.9);color:#fff;padding:10px 20px;border-radius:10px;font-size:13px;z-index:1000;max-width:90%;text-align:center;display:none;border:1px solid #e94560;';
+      document.body.appendChild(t);
+      toast = t;
+    }
+    toast.textContent = msg;
+    toast.style.display = 'block';
+    clearTimeout(toast._timeout);
+    toast._timeout = setTimeout(function() { toast.style.display = 'none'; }, 4000);
+  }
+  
+  function ocultarTodosLosPaneles() {
+    var paneles = document.querySelectorAll('.panel');
+    for (var i = 0; i < paneles.length; i++) {
+      paneles[i].className = 'panel';
+    }
+    document.getElementById('menuPrincipal').style.display = 'block';
+  }
+  
+  function mostrarPanel(panel) {
+    ocultarTodosLosPaneles();
+    document.getElementById('menuPrincipal').style.display = 'none';
+    var panelId = '';
+    var funcionCarga = '';
+    switch(panel) {
+      case 'registro': panelId = 'panelRegistro'; funcionCarga = 'cargarJugadoresExistentes'; break;
+      case 'ronda': panelId = 'panelRonda'; break;
+      case 'resultados': panelId = 'panelResultados'; funcionCarga = 'cargarPartidasPendientes'; break;
+      case 'clasificacion': panelId = 'panelClasificacion'; funcionCarga = 'cargarClasificacion'; break;
+      case 'dashboard': panelId = 'panelDashboard'; funcionCarga = 'cargarDashboard'; break;
+      case 'mazos': panelId = 'panelMazos'; funcionCarga = 'cargarMazos'; break;
+      case 'cierre': panelId = 'panelCierre'; funcionCarga = 'cargarCierre'; break;
+      case 'reinicio': panelId = 'panelReinicio'; break;
+      default: panelId = 'panel' + panel.charAt(0).toUpperCase() + panel.slice(1);
+    }
+    document.getElementById(panelId).className = 'panel active';
+    if (funcionCarga && typeof window[funcionCarga] === 'function') {
+      window[funcionCarga]();
+    }
+  }
+  
+  function cerrarPanel(panelId) {
+    document.getElementById(panelId).className = 'panel';
+    document.getElementById('menuPrincipal').style.display = 'block';
+    actualizarStats();
+  }
+  
+  function mostrarMensaje(elementId, texto, tipo) {
+    var el = document.getElementById(elementId);
+    if (!el) return;
+    el.textContent = texto;
+    el.className = 'mensaje mensaje-' + tipo + ' show';
+    clearTimeout(el._timeout);
+    el._timeout = setTimeout(function() { el.className = 'mensaje'; }, 4000);
+  }
+  
+  // ===== FUNCIONES DE CARGA (APP) =====
+  function cargarJugadoresExistentes() {
+    google.script.run
+      .withSuccessHandler(function(lista) {
+        if (lista && lista.length > 0) {
+          jugadores = lista;
+          actualizarListaJugadores();
+        }
+      })
+      .obtenerJugadoresExistentes();
+  }
+  
+  function actualizarListaJugadores() {
+    var lista = document.getElementById('listaJugadores');
+    var contador = document.getElementById('contadorJugadores');
+    contador.textContent = jugadores.length;
+    if (jugadores.length === 0) {
+      lista.innerHTML = '<div class="vacio">🎯 No hay jugadores registrados</div>';
+      return;
+    }
+    var html = '';
+    for (var i = 0; i < jugadores.length; i++) {
+      var j = jugadores[i];
+      html += '<div class="jugador-item"><div><span class="jugador-nombre">' + (i+1) + '. ' + j.nombre + '</span><span class="jugador-deck">' + (j.deck || 'Sin deck') + '</span></div><span class="eliminar" onclick="eliminarJugador(' + i + ')">✖</span></div>';
+    }
+    lista.innerHTML = html;
+  }
+  
+  function agregarJugador() {
+    var nombre = document.getElementById('nombreJugador').value.trim();
+    var deck = document.getElementById('deckJugador').value.trim();
+    if (!nombre) { mostrarMensaje('mensajeRegistro', '⚠️ Ingresa un nombre', 'error'); return; }
+    jugadores.push({ nombre: nombre, deck: deck || '' });
+    document.getElementById('nombreJugador').value = '';
+    document.getElementById('deckJugador').value = '';
+    actualizarListaJugadores();
+    mostrarMensaje('mensajeRegistro', '✅ ' + nombre + ' agregado', 'exito');
+    document.getElementById('nombreJugador').focus();
+  }
+  
+  function eliminarJugador(index) {
+    var nombre = jugadores[index].nombre;
+    if (confirm('¿Eliminar a ' + nombre + '?')) {
+      jugadores.splice(index, 1);
+      actualizarListaJugadores();
+      mostrarMensaje('mensajeRegistro', '🗑️ ' + nombre + ' eliminado', 'info');
+    }
+  }
+  
+  function cargarEjemploJugadores() {
+    var ejemplos = ['Goku, Dragón', 'Vegeta, Sombra', 'Broly, Defensor Agro', 'Picoro, Desafiante', 'Gohan, Caballero', 'Granola, Sacerdote'];
+    for (var i = 0; i < ejemplos.length; i++) {
+      var partes = ejemplos[i].split(', ');
+      jugadores.push({ nombre: partes[0], deck: partes[1] || '' });
+    }
+    actualizarListaJugadores();
+    mostrarMensaje('mensajeRegistro', '📝 6 jugadores de ejemplo cargados', 'exito');
+  }
+  
+  function guardarJugadores() {
+    if (jugadores.length === 0) { mostrarMensaje('mensajeRegistro', '⚠️ No hay jugadores para guardar', 'error'); return; }
+    var btn = document.querySelector('#panelRegistro .btn-success');
+    btn.disabled = true;
+    btn.textContent = '⏳ Guardando...';
+    google.script.run
+      .withSuccessHandler(function(mensaje) {
+        btn.disabled = false;
+        btn.textContent = '✅ Guardar';
+        mostrarMensaje('mensajeRegistro', mensaje, 'exito');
+        if (mensaje.indexOf('✅') === 0) {
+          setTimeout(function() { cerrarPanel('panelRegistro'); }, 1500);
+        }
+      })
+      .withFailureHandler(function(error) {
+        btn.disabled = false;
+        btn.textContent = '✅ Guardar';
+        mostrarMensaje('mensajeRegistro', '❌ Error: ' + error.message, 'error');
+      })
+      .guardarJugadoresDesdeHTML(jugadores);
+  }
+  
+  function generarRonda() {
+    var container = document.getElementById('contenidoRonda');
+    container.innerHTML = '<div style="text-align:center;padding:20px;color:#888;">⏳ Generando ronda...</div>';
+    google.script.run
+      .withSuccessHandler(function(resultado) {
+        container.innerHTML = '<pre class="ronda-contenido">' + resultado + '</pre>';
+        mostrarMensaje('mensajeRonda', '✅ Ronda generada', 'exito');
+      })
+      .withFailureHandler(function(error) {
+        container.innerHTML = '<div style="text-align:center;padding:20px;color:#e94560;">❌ Error: ' + error.message + '</div>';
+      })
+      .generarEmparejamientos();
+  }
+  
+  function cargarPartidasPendientes() {
+    var container = document.getElementById('listaPartidas');
+    container.innerHTML = '<div style="text-align:center;padding:20px;color:#888;">⏳ Cargando...</div>';
+    google.script.run
+      .withSuccessHandler(function(partidas) {
+        partidasPendientes = partidas;
+        if (!partidas || partidas.length === 0) {
+          container.innerHTML = '<div style="text-align:center;padding:20px;color:#2ecc71;">🎉 No hay partidas pendientes</div>';
+          return;
+        }
+        var html = '';
+        for (var i = 0; i < partidas.length; i++) {
+          var p = partidas[i];
+          var esBye = p.j2 === 'BYE';
+          html += '<div class="partida" data-fila="' + p.fila + '">';
+          html += '<div class="partida-header"><span>Mesa ' + p.mesa + '</span><span>Ronda ' + p.ronda + '</span></div>';
+          html += '<div class="vs-row"><div class="player">' + p.j1 + '</div><div class="vs">⚡</div><div class="player">' + (esBye ? 'BYE' : p.j2) + '</div></div>';
+          if (!esBye) {
+            html += '<div class="games-row">';
+            html += '<input type="number" id="g1_' + i + '" placeholder="' + p.j1 + '" min="0" max="3">';
+            html += '<input type="number" id="g2_' + i + '" placeholder="' + p.j2 + '" min="0" max="3">';
+            html += '</div>';
+            html += '<select id="ganador_' + i + '">';
+            html += '<option value="">Seleccionar ganador...</option>';
+            html += '<option value="' + p.j1 + '">' + p.j1 + '</option>';
+            html += '<option value="' + p.j2 + '">' + p.j2 + '</option>';
+            html += '<option value="empate">🤝 Empate</option>';
+            html += '</select>';
+          } else {
+            html += '<div style="text-align:center;color:#f5a623;padding:6px;">🎯 BYE - Victoria automática</div>';
+            html += '<input type="hidden" id="ganador_' + i + '" value="' + p.j1 + '">';
+            html += '<input type="hidden" id="g1_' + i + '" value="2">';
+            html += '<input type="hidden" id="g2_' + i + '" value="0">';
+          }
+          html += '</div>';
+        }
+        html += '<button class="btn btn-success" onclick="guardarResultados()">💾 Guardar Resultados</button>';
+        container.innerHTML = html;
+      })
+      .withFailureHandler(function(error) {
+        container.innerHTML = '<div style="color:#e94560;text-align:center;padding:15px;">❌ Error: ' + error.message + '<br><button class="btn" onclick="cargarPartidasPendientes()" style="margin-top:8px;">🔄 Reintentar</button></div>';
+      })
+      .obtenerPartidasPendientes();
+  }
+  
+  function guardarResultados() {
+    var partidas = document.querySelectorAll('#listaPartidas .partida');
+    var resultados = [];
+    var errores = 0;
+    for (var i = 0; i < partidas.length; i++) {
+      var g1 = document.getElementById('g1_' + i);
+      var g2 = document.getElementById('g2_' + i);
+      var ganador = document.getElementById('ganador_' + i);
+      if (ganador && ganador.value && g1 && g2 && g1.value !== '' && g2.value !== '') {
+        var filaReal = parseInt(partidas[i].getAttribute('data-fila')) || (i + 2);
+        resultados.push({ fila: filaReal, ganador: ganador.value, games1: parseInt(g1.value), games2: parseInt(g2.value) });
+      } else if (ganador && ganador.value && (!g1 || !g2 || g1.value === '' || g2.value === '')) {
+        errores++;
+      }
+    }
+    if (resultados.length === 0) { mostrarMensaje('mensajeResultados', '⚠️ Completa los campos de al menos una partida', 'error'); return; }
+    if (errores > 0) { mostrarMensaje('mensajeResultados', '⚠️ Hay ' + errores + ' partidas con campos incompletos', 'error'); return; }
+    var btn = document.querySelector('#panelResultados .btn-success');
+    if (btn) { btn.disabled = true; btn.textContent = '⏳ Guardando...'; }
+    google.script.run
+      .withSuccessHandler(function(mensaje) {
+        mostrarMensaje('mensajeResultados', mensaje, 'exito');
+        cargarPartidasPendientes();
+        if (btn) { btn.disabled = false; btn.textContent = '💾 Guardar Resultados'; }
+      })
+      .withFailureHandler(function(error) {
+        mostrarMensaje('mensajeResultados', '❌ Error: ' + error.message, 'error');
+        if (btn) { btn.disabled = false; btn.textContent = '💾 Guardar Resultados'; }
+      })
+      .guardarResultadosPartidas(resultados);
+  }
+  
+  function cargarClasificacion() {
+    var container = document.getElementById('contenidoClasificacion');
+    container.innerHTML = '<div style="text-align:center;padding:20px;color:#888;">⏳ Cargando clasificación...</div>';
+    google.script.run
+      .withSuccessHandler(function(datos) {
+        if (!datos || datos.length === 0) {
+          container.innerHTML = '<div style="text-align:center;padding:20px;color:#e94560;">❌ No hay datos de clasificación</div>';
+          return;
+        }
+        var html = '';
+        html += '<table><thead><tr><th>Pos</th><th class="text-left">Jugador</th><th>PTS</th><th>PGW</th><th>OMW</th></tr></thead><tbody>';
+        for (var i = 0; i < datos.length; i++) {
+          var d = datos[i];
+          var bgColor = (i % 2 === 0) ? '#16213e' : '#1a1a2e';
+          var medalla = i === 0 ? '🥇' : (i === 1 ? '🥈' : (i === 2 ? '🥉' : ''));
+          var liderClass = (i === 0) ? 'lider' : '';
+          html += '<tr style="background:' + bgColor + ';">';
+          html += '<td class="text-center ' + liderClass + '"><span class="medalla">' + medalla + '</span> ' + d.pos + '</td>';
+          html += '<td class="text-left ' + liderClass + '">' + d.nombre + '</td>';
+          html += '<td class="text-center ' + liderClass + '">' + d.pts + '</td>';
+          html += '<td class="text-center ' + liderClass + '">' + d.pgw + '</td>';
+          html += '<td class="text-center ' + liderClass + '">' + d.omw + '</td>';
+          html += '</tr>';
+        }
+        html += '</tbody></table>';
+        if (datos.length > 0) {
+          html += '<div class="stats-pie">🏆 Líder: <strong class="lider-nombre">' + datos[0].nombre + '</strong> | ⭐ Pts Máximos: <strong class="pts-max">' + datos[0].pts + '</strong> | 👥 Total: <strong class="total-jugadores">' + datos.length + '</strong> jugadores</div>';
+        }
+        container.innerHTML = html;
+      })
+      .withFailureHandler(function(error) {
+        container.innerHTML = '<div style="text-align:center;padding:20px;color:#e94560;">❌ Error: ' + error.message + '</div>';
+      })
+      .obtenerDatosClasificacion();
+  }
+  
+  function cargarDashboard() {
+    var container = document.getElementById('contenidoDashboard');
+    container.innerHTML = '<div style="text-align:center;padding:20px;color:#888;">⏳ Cargando dashboard...</div>';
+    google.script.run
+      .withSuccessHandler(function(datos) {
+        if (!datos || datos.length === 0) {
+          container.innerHTML = '<div style="text-align:center;padding:20px;color:#e94560;">❌ No hay datos para el dashboard</div>';
+          return;
+        }
+        var html = '';
+        html += '<div class="grid-stats">';
+        var stats = [
+          { num: datos.totalJugadores || 0, label: '👥 Jugadores' },
+          { num: datos.puntosMax || 0, label: '⭐ Pts Máximos' },
+          { num: datos.totalPartidas || 0, label: '🎯 Partidas' },
+          { num: datos.totalGames || 0, label: '🎮 Games' }
+        ];
+        for (var i = 0; i < stats.length; i++) {
+          html += '<div class="stat-card"><div class="num">' + stats[i].num + '</div><div class="label">' + stats[i].label + '</div></div>';
+        }
+        html += '</div>';
+        html += '<div style="margin-top:12px;padding:10px;background:#0f3460;border-radius:8px;text-align:center;font-size:13px;">🏆 Líder: <strong style="color:#f5a623;">' + (datos.lider || 'N/A') + '</strong></div>';
+        if (datos.top3 && datos.top3.length > 0) {
+          html += '<div style="margin-top:10px;font-size:13px;color:#f5a623;font-weight:bold;">🏅 TOP 3</div>';
+          for (var i = 0; i < datos.top3.length; i++) {
+            var t = datos.top3[i];
+            var icono = i === 0 ? '🥇' : (i === 1 ? '🥈' : '🥉');
+            html += '<div class="premio-item">' + icono + ' ' + t.nombre + ' - ' + t.pts + ' pts</div>';
+          }
+        }
+        container.innerHTML = html;
+      })
+      .withFailureHandler(function(error) {
+        container.innerHTML = '<div style="text-align:center;padding:20px;color:#e94560;">❌ Error: ' + error.message + '</div>';
+      })
+      .obtenerDatosDashboard();
+  }
+  
+  function cargarMazos() {
+    var container = document.getElementById('contenidoMazos');
+    container.innerHTML = '<div style="text-align:center;padding:20px;color:#888;">⏳ Cargando estadísticas de mazos...</div>';
+    google.script.run
+      .withSuccessHandler(function(datos) {
+        if (!datos || datos.length === 0) {
+          container.innerHTML = '<div style="text-align:center;padding:20px;color:#e94560;">❌ No hay datos de mazos</div>';
+          return;
+        }
+        var html = '';
+        html += '<div style="text-align:center;color:#888;font-size:12px;margin-bottom:10px;">👥 Total jugadores: <strong style="color:#f5a623;">' + datos.totalJugadores + '</strong> | 🎴 Total mazos: <strong style="color:#e94560;">' + datos.totalMazos + '</strong></div>';
+        for (var i = 0; i < datos.mazos.length; i++) {
+          var m = datos.mazos[i];
+          var icono = i === 0 ? '🥇' : (i === 1 ? '🥈' : (i === 2 ? '🥉' : (i+1)+'.'));
+          html += '<div class="mazo-item"><span class="mazo-nombre">' + icono + ' ' + m.nombre + '</span><span class="mazo-cantidad">' + m.cantidad + ' jug. (' + m.porcentaje + '%)</span></div>';
+        }
+        container.innerHTML = html;
+      })
+      .withFailureHandler(function(error) {
+        container.innerHTML = '<div style="text-align:center;padding:20px;color:#e94560;">❌ Error: ' + error.message + '</div>';
+      })
+      .obtenerDatosMazos();
+  }
+  
+  function cargarCierre() {
+    var container = document.getElementById('contenidoCierre');
+    container.innerHTML = '<div style="text-align:center;padding:20px;color:#888;">⏳ Cargando resumen del torneo...</div>';
+    google.script.run
+      .withSuccessHandler(function(datos) {
+        if (!datos) {
+          container.innerHTML = '<div style="text-align:center;padding:20px;color:#e94560;">❌ No hay datos para el cierre</div>';
+          return;
+        }
+        var html = '';
+        if (datos.campeon) {
+          html += '<div class="campeon-box">🏆 ' + datos.campeon + ' - ¡Campeón!</div>';
+        }
+        html += '<div style="margin-top:10px;font-size:13px;color:#f5a623;font-weight:bold;">📋 CLASIFICACIÓN FINAL</div>';
+        for (var i = 0; i < datos.clasificacion.length; i++) {
+          var c = datos.clasificacion[i];
+          var icono = i === 0 ? '🥇' : (i === 1 ? '🥈' : (i === 2 ? '🥉' : (i+1)+'.'));
+          html += '<div class="mazo-item"><span class="mazo-nombre">' + icono + ' ' + c.nombre + '</span><span class="mazo-cantidad">' + c.pts + ' pts | ' + c.pgw + '</span></div>';
+        }
+        if (datos.premios && datos.premios.length > 0) {
+          html += '<div style="margin-top:10px;font-size:13px;color:#f5a623;font-weight:bold;">🏅 PREMIACIONES</div>';
+          for (var i = 0; i < datos.premios.length; i++) {
+            html += '<div class="premio-item">' + datos.premios[i] + '</div>';
+          }
+        }
+        if (datos.topMazos && datos.topMazos.length > 0) {
+          html += '<div style="margin-top:10px;font-size:13px;color:#f5a623;font-weight:bold;">🃏 TOP MAZOS</div>';
+          for (var i = 0; i < datos.topMazos.length; i++) {
+            var m = datos.topMazos[i];
+            var icono = i === 0 ? '🥇' : (i === 1 ? '🥈' : '🥉');
+            html += '<div class="mazo-item"><span class="mazo-nombre">' + icono + ' ' + m.nombre + '</span><span class="mazo-cantidad">' + m.cantidad + ' jug. (' + m.porcentaje + '%)</span></div>';
+          }
+        }
+        html += '<div style="margin-top:12px;text-align:center;color:#888;font-size:12px;border-top:1px solid #333;padding-top:8px;">🎉 ¡Torneo Finalizado! 🎉</div>';
+        container.innerHTML = html;
+      })
+      .withFailureHandler(function(error) {
+        container.innerHTML = '<div style="text-align:center;padding:20px;color:#e94560;">❌ Error: ' + error.message + '</div>';
+      })
+      .obtenerDatosCierre();
+  }
+  
+  function ejecutarReinicio() {
+    var container = document.getElementById('contenidoReinicio');
+    container.innerHTML = '<div style="text-align:center;padding:20px;color:#888;">⏳ Reiniciando torneo...</div>';
+    google.script.run
+      .withSuccessHandler(function(mensaje) {
+        container.innerHTML = '<div style="text-align:center;padding:20px;color:#2ecc71;">✅ ' + mensaje + '</div>';
+        setTimeout(function() {
+          cerrarPanel('panelReinicio');
+          actualizarStats();
+        }, 1500);
+      })
+      .withFailureHandler(function(error) {
+        container.innerHTML = '<div style="text-align:center;padding:20px;color:#e94560;">❌ Error: ' + error.message + '</div>';
+      })
+      .reiniciarTorneo();
+  }
+  
+  function actualizarStats() {
+    google.script.run
+      .withSuccessHandler(function(stats) {
+        document.getElementById('jugadoresCount').textContent = stats.jugadores || 0;
+        document.getElementById('partidasCount').textContent = stats.partidas || 0;
+        document.getElementById('rondaCount').textContent = stats.ronda || 0;
+      })
+      .obtenerEstadisticasApp();
+  }
+</script>
+</body>
+</html>
