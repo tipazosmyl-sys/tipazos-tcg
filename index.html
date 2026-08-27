@@ -11,7 +11,7 @@
   <meta name="theme-color" content="#0f0c29">
   <meta name="apple-mobile-web-app-title" content="Tipazos">
   
-  <!-- ===== MANIFIESTO PARA PWA (INSTALACIÓN COMO APP) ===== -->
+  <!-- ===== MANIFIESTO PARA PWA (CORREGIDO) ===== -->
   <link rel="manifest" href="data:application/json,{
     &quot;name&quot;:&quot;Tipazos TCG&quot;,
     &quot;short_name&quot;:&quot;Tipazos&quot;,
@@ -195,17 +195,6 @@
       margin-bottom: 20px;
     }
     
-    .badge {
-      display: inline-block;
-      background: #e94560;
-      color: white;
-      padding: 2px 10px;
-      border-radius: 20px;
-      font-size: 10px;
-      font-weight: bold;
-      margin-left: 8px;
-    }
-    
     @media (max-width: 380px) {
       h1 { font-size: 26px; }
       .logo { width: 80px; height: 80px; padding: 12px; }
@@ -305,12 +294,6 @@
     document.getElementById('btnInstall').textContent = '✅ ¡Instalada!';
     document.getElementById('btnInstall').style.background = '#2ecc71';
   });
-  
-  // ========== REDIRIGIR AUTOMÁTICAMENTE (OPCIONAL) ==========
-  // Descomenta la siguiente línea si quieres redirigir automáticamente
-  // setTimeout(function() {
-  //   window.location.href = 'https://script.google.com/macros/s/AKfycbxL1a2-Qh_eKKZ2edY8wE8w4R2CyXPL8_kVQmhSgjYcgH9T22_DH6stAraFz21aAclX/exec';
-  // }, 3000);
 </script>
 
 </body>
