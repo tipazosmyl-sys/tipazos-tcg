@@ -4,7 +4,7 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
   
-  <!-- ===== METAETIQUETAS PARA PWA (PANTALLA COMPLETA) ===== -->
+  <!-- ===== METAETIQUETAS PARA PWA ===== -->
   <meta name="apple-mobile-web-app-capable" content="yes">
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
   <meta name="mobile-web-app-capable" content="yes">
@@ -43,12 +43,11 @@
       font-family: 'Segoe UI', -apple-system, BlinkMacSystemFont, sans-serif;
     }
     
-    /* ===== CONTENEDOR PRINCIPAL ===== */
     .app-wrapper {
       display: flex;
       flex-direction: column;
       height: 100vh;
-      height: 100dvh; /* Para móviles modernos */
+      height: 100dvh;
       width: 100%;
       background: #0f0c29;
     }
@@ -178,7 +177,6 @@
       object-fit: cover;
     }
     
-    /* ===== RESPONSIVE ===== */
     @media (max-width: 480px) {
       .custom-header .logo h1 { font-size: 14px; }
       .custom-header .logo span { font-size: 8px; }
@@ -202,7 +200,7 @@
   <!-- ===== APP PRINCIPAL ===== -->
   <div class="app-wrapper">
     
-    <!-- Barra superior personalizada -->
+    <!-- Barra superior personalizada (SOLO UNA) -->
     <div class="custom-header">
       <div class="logo">
         <img src="https://i.postimg.cc/N5GHHFx3/Tipazos-sin-fondo.png" 
@@ -219,7 +217,7 @@
       </div>
     </div>
     
-    <!-- IFRAME con la app de Google Apps Script -->
+    <!-- IFRAME con la app (la barra de adentro se oculta automáticamente) -->
     <div class="iframe-container">
       <iframe 
         id="appFrame"
@@ -234,37 +232,33 @@
   </div>
 
   <script>
-    // ========== OCULTAR LOADING CUANDO CARGA EL IFRAME ==========
+    // ===== OCULTAR LOADING =====
     const iframe = document.getElementById('appFrame');
     const loading = document.getElementById('loadingOverlay');
     
-    // Ocultar loading cuando el iframe termina de cargar
     iframe.addEventListener('load', function() {
       setTimeout(function() {
         loading.classList.add('hidden');
       }, 500);
     });
     
-    // Fallback: ocultar después de 5 segundos si no carga
     setTimeout(function() {
       loading.classList.add('hidden');
     }, 5000);
     
-    // ========== FORZAR PANTALLA COMPLETA EN MÓVIL ==========
-    // iOS: cuando está en modo standalone, ocultar la barra
+    // ===== FORZAR PANTALLA COMPLETA =====
     if (window.navigator.standalone) {
       document.documentElement.style.height = '100vh';
       document.documentElement.style.overflow = 'hidden';
     }
     
-    // Android: scroll para ocultar barra de dirección
     window.addEventListener('load', function() {
       setTimeout(function() {
         window.scrollTo(0, 1);
       }, 300);
     });
     
-    // ========== DETECTAR INSTALACIÓN PWA ==========
+    // ===== DETECTAR INSTALACIÓN =====
     let deferredPrompt = null;
     
     window.addEventListener('beforeinstallprompt', function(e) {
@@ -277,7 +271,7 @@
       console.log('🎉 App instalada exitosamente');
     });
     
-    // ========== RECARGAR IFRAME SI SE PIERDE CONEXIÓN ==========
+    // ===== RECARGAR IFRAME SI FALLA =====
     let reloadAttempts = 0;
     const maxReloadAttempts = 3;
     
