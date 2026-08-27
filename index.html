@@ -4,18 +4,18 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
   
-  <!-- ===== METAETIQUETAS PARA PWA ===== -->
+  <!-- ===== METAETIQUETAS PARA PWA (PANTALLA COMPLETA) ===== -->
   <meta name="apple-mobile-web-app-capable" content="yes">
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
   <meta name="mobile-web-app-capable" content="yes">
   <meta name="theme-color" content="#0f0c29">
   <meta name="apple-mobile-web-app-title" content="Tipazos">
   
-  <!-- ===== MANIFIESTO PARA PWA (CON TU URL) ===== -->
+  <!-- ===== MANIFIESTO PARA PWA ===== -->
   <link rel="manifest" href="data:application/json,{
     &quot;name&quot;:&quot;Tipazos TCG&quot;,
     &quot;short_name&quot;:&quot;Tipazos&quot;,
-    &quot;start_url&quot;:&quot;https://script.google.com/macros/s/AKfycbzahT0z2qJxBndVr-65a0LSDcj0rrcbo790wCohw25SEEshd6BEUW22D8AwrWXNl3TZ/exec&quot;,
+    &quot;start_url&quot;:&quot;https://tipazosml-sys.github.io/tipazos-tcg/&quot;,
     &quot;display&quot;:&quot;standalone&quot;,
     &quot;orientation&quot;:&quot;portrait&quot;,
     &quot;background_color&quot;:&quot;#0f0c29&quot;,
@@ -38,149 +38,71 @@
     html, body {
       height: 100%;
       width: 100%;
+      overflow: hidden;
       background: #0f0c29;
       font-family: 'Segoe UI', -apple-system, BlinkMacSystemFont, sans-serif;
-      color: #eee;
-      -webkit-tap-highlight-color: transparent;
-      touch-action: manipulation;
-      overflow: hidden;
     }
     
-    .container {
+    /* ===== CONTENEDOR PRINCIPAL ===== */
+    .app-wrapper {
       display: flex;
       flex-direction: column;
+      height: 100vh;
+      height: 100dvh; /* Para móviles modernos */
+      width: 100%;
+      background: #0f0c29;
+    }
+    
+    /* ===== BARRA SUPERIOR PERSONALIZADA ===== */
+    .custom-header {
+      background: linear-gradient(135deg, #1a1a2e, #16213e);
+      padding: 8px 16px;
+      display: flex;
       align-items: center;
-      justify-content: center;
-      min-height: 100vh;
-      padding: 30px 20px;
-      text-align: center;
+      justify-content: space-between;
+      border-bottom: 2px solid #e94560;
+      flex-shrink: 0;
+      z-index: 10;
+      min-height: 52px;
     }
     
-    .logo {
-      width: 100px;
-      height: 100px;
-      border-radius: 24px;
-      border: 3px solid #e94560;
-      padding: 15px;
-      background: #16213e;
-      margin-bottom: 25px;
-      object-fit: cover;
-      box-shadow: 0 0 40px rgba(233, 69, 96, 0.2);
-    }
-    
-    h1 {
-      font-size: 32px;
-      color: #e94560;
-      margin-bottom: 8px;
-      font-weight: 800;
-    }
-    
-    .subtitle {
-      color: #888;
-      font-size: 16px;
-      margin-bottom: 30px;
-    }
-    
-    .subtitle span {
-      color: #f5a623;
-    }
-    
-    .btn {
-      background: #e94560;
-      color: white;
-      border: none;
-      padding: 16px 45px;
-      border-radius: 12px;
-      font-size: 18px;
-      font-weight: bold;
-      cursor: pointer;
-      text-decoration: none;
-      display: inline-block;
-      margin: 6px;
-      transition: transform 0.2s, box-shadow 0.2s;
-      box-shadow: 0 4px 20px rgba(233, 69, 96, 0.3);
-      min-width: 200px;
-    }
-    
-    .btn:active {
-      transform: scale(0.95);
-    }
-    
-    .btn-secondary {
-      background: #16213e;
-      border: 2px solid #e94560;
-      box-shadow: none;
-    }
-    
-    .btn-install {
-      background: #2ecc71;
-      box-shadow: 0 4px 20px rgba(46, 204, 113, 0.3);
-      animation: pulse 2s infinite;
-    }
-    
-    @keyframes pulse {
-      0% { transform: scale(1); }
-      50% { transform: scale(1.03); }
-      100% { transform: scale(1); }
-    }
-    
-    .features {
-      margin-top: 30px;
-      display: grid;
-      grid-template-columns: 1fr 1fr;
+    .custom-header .logo {
+      display: flex;
+      align-items: center;
       gap: 10px;
-      max-width: 350px;
-      width: 100%;
     }
     
-    .feature {
-      background: #16213e;
-      padding: 10px 8px;
-      border-radius: 8px;
-      font-size: 12px;
-      color: #888;
-      border: 1px solid #222;
+    .custom-header .logo img {
+      width: 28px;
+      height: 28px;
+      border-radius: 6px;
+      border: 2px solid #e94560;
+      object-fit: cover;
     }
     
-    .feature span {
+    .custom-header .logo h1 {
+      font-size: 16px;
       color: #e94560;
       font-weight: bold;
     }
     
-    .install-info {
-      margin-top: 25px;
-      padding: 15px;
-      background: #16213e;
-      border-radius: 10px;
-      border: 1px solid #333;
-      font-size: 13px;
-      color: #666;
-      max-width: 350px;
-      width: 100%;
-    }
-    
-    .install-info strong {
+    .custom-header .logo span {
+      font-size: 9px;
       color: #f5a623;
     }
     
-    .footer {
-      margin-top: 30px;
-      font-size: 11px;
-      color: #444;
+    .custom-header .status {
+      font-size: 10px;
+      color: #2ecc71;
     }
     
-    .footer a {
-      color: #e94560;
-      text-decoration: none;
-    }
-    
-    .status-dot {
+    .custom-header .status .dot {
       display: inline-block;
       width: 8px;
       height: 8px;
       background: #2ecc71;
       border-radius: 50%;
-      margin-right: 6px;
+      margin-right: 4px;
       animation: blink 1.5s infinite;
     }
     
@@ -189,112 +111,184 @@
       50% { opacity: 0.3; }
     }
     
-    .online-status {
-      color: #2ecc71;
-      font-size: 12px;
-      margin-bottom: 20px;
+    /* ===== IFRAME ===== */
+    .iframe-container {
+      flex: 1;
+      width: 100%;
+      background: #0f0c29;
+      position: relative;
     }
     
-    @media (max-width: 380px) {
-      h1 { font-size: 26px; }
-      .logo { width: 80px; height: 80px; padding: 12px; }
-      .btn { padding: 14px 30px; font-size: 16px; min-width: 160px; }
-      .features { grid-template-columns: 1fr 1fr; gap: 6px; }
-      .feature { font-size: 11px; padding: 8px 6px; }
+    .iframe-container iframe {
+      width: 100%;
+      height: 100%;
+      border: none;
+      background: #0f0c29;
+      display: block;
     }
     
-    @media (min-width: 600px) {
-      .container { max-width: 500px; margin: 0 auto; }
+    /* ===== LOADING ===== */
+    .loading-overlay {
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background: #0f0c29;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      z-index: 9999;
+      transition: opacity 0.5s ease;
+    }
+    
+    .loading-overlay.hidden {
+      opacity: 0;
+      pointer-events: none;
+    }
+    
+    .loading-overlay .spinner {
+      width: 40px;
+      height: 40px;
+      border: 3px solid #333;
+      border-top-color: #e94560;
+      border-radius: 50%;
+      animation: spin 0.8s linear infinite;
+    }
+    
+    @keyframes spin {
+      to { transform: rotate(360deg); }
+    }
+    
+    .loading-overlay p {
+      color: #888;
+      margin-top: 16px;
+      font-size: 14px;
+    }
+    
+    .loading-overlay .logo-loading {
+      width: 60px;
+      height: 60px;
+      border-radius: 16px;
+      border: 3px solid #e94560;
+      padding: 10px;
+      background: #16213e;
+      margin-bottom: 16px;
+      object-fit: cover;
+    }
+    
+    /* ===== RESPONSIVE ===== */
+    @media (max-width: 480px) {
+      .custom-header .logo h1 { font-size: 14px; }
+      .custom-header .logo span { font-size: 8px; }
+      .custom-header { padding: 6px 12px; min-height: 46px; }
+      .custom-header .logo img { width: 24px; height: 24px; }
     }
   </style>
 </head>
 <body>
 
-<div class="container">
-  
-  <!-- Logo -->
-  <img src="https://i.postimg.cc/N5GHHFx3/Tipazos-sin-fondo.png" 
-       alt="Tipazos TCG" 
-       class="logo"
-       onerror="this.src='data:image/svg+xml,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 width=%22100%22 height=%22100%22 viewBox=%220 0 100 100%22%3E%3Crect width=%22100%22 height=%22100%22 rx=%2224%22 fill=%22%2316213e%22/%3E%3Ctext x=%2250%22 y=%2265%22 text-anchor=%22middle%22 font-size=%2250%22%3E🏆%3C/text%3E%3C/svg%3E'">
-  
-  <h1>🏆 Tipazos TCG</h1>
-  <p class="subtitle">Gestor de Torneos · <span>Sistema Suizo</span></p>
-  
-  <div class="online-status">
-    <span class="status-dot"></span> App en línea
+  <!-- ===== LOADING ===== -->
+  <div class="loading-overlay" id="loadingOverlay">
+    <img src="https://i.postimg.cc/N5GHHFx3/Tipazos-sin-fondo.png" 
+         alt="Tipazos" 
+         class="logo-loading"
+         onerror="this.src='data:image/svg+xml,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 width=%2260%22 height=%2260%22 viewBox=%220 0 60 60%22%3E%3Crect width=%2260%22 height=%2260%22 rx=%2216%22 fill=%22%2316213e%22/%3E%3Ctext x=%2230%22 y=%2240%22 text-anchor=%22middle%22 font-size=%2232%22%3E🏆%3C/text%3E%3C/svg%3E'">
+    <div class="spinner"></div>
+    <p>Cargando Tipazos TCG...</p>
   </div>
-  
-  <!-- Botón principal: Abrir App (CON TU URL) -->
-  <a href="https://script.google.com/macros/s/AKfycbzahT0z2qJxBndVr-65a0LSDcj0rrcbo790wCohw25SEEshd6BEUW22D8AwrWXNl3TZ/exec" class="btn">
-    🚀 Abrir Aplicación
-  </a>
-  
-  <!-- Botón de instalación (solo visible en Chrome/Edge) -->
-  <button id="btnInstall" class="btn btn-install" style="display:none;">
-    📲 Instalar App
-  </button>
-  
-  <br>
-  
-  <a href="https://github.com/tipazosml-sys/tipazos-tcg" class="btn btn-secondary">
-    📦 Ver Código
-  </a>
-  
-  <!-- Características -->
-  <div class="features">
-    <div class="feature"><span>✅</span> Sistema Suizo</div>
-    <div class="feature"><span>🎯</span> BYE Inteligente</div>
-    <div class="feature"><span>📊</span> Clasificación OMW</div>
-    <div class="feature"><span>📱</span> PWA Ready</div>
-  </div>
-  
-  <!-- Info de instalación -->
-  <div class="install-info">
-    <strong>📱 Instalación rápida:</strong><br>
-    Android: Chrome → ⋮ → "Añadir a pantalla de inicio"<br>
-    iPhone: Safari → Compartir → "Añadir a pantalla de inicio"
-  </div>
-  
-  <div class="footer">
-    ⚡ <a href="https://github.com/tipazosml-sys/tipazos-tcg">Tipazos TCG</a> · Hecho con ❤️ en Chile
-  </div>
-</div>
 
-<script>
-  // ========== DETECTAR SI SE PUEDE INSTALAR ==========
-  let deferredPrompt = null;
-  
-  window.addEventListener('beforeinstallprompt', function(e) {
-    e.preventDefault();
-    deferredPrompt = e;
+  <!-- ===== APP PRINCIPAL ===== -->
+  <div class="app-wrapper">
     
-    // Mostrar botón de instalación
-    const btnInstall = document.getElementById('btnInstall');
-    btnInstall.style.display = 'inline-block';
+    <!-- Barra superior personalizada -->
+    <div class="custom-header">
+      <div class="logo">
+        <img src="https://i.postimg.cc/N5GHHFx3/Tipazos-sin-fondo.png" 
+             alt="Logo" 
+             onerror="this.style.display='none'">
+        <div>
+          <h1>Tipazos</h1>
+          <span>TCG Chile</span>
+        </div>
+      </div>
+      <div class="status">
+        <span class="dot"></span>
+        <span>Online</span>
+      </div>
+    </div>
     
-    btnInstall.addEventListener('click', function() {
-      if (deferredPrompt) {
-        deferredPrompt.prompt();
-        deferredPrompt.userChoice.then(function(result) {
-          if (result.outcome === 'accepted') {
-            console.log('✅ App instalada');
-          } else {
-            console.log('❌ Instalación cancelada');
-          }
-          deferredPrompt = null;
-          btnInstall.style.display = 'none';
-        });
+    <!-- IFRAME con la app de Google Apps Script -->
+    <div class="iframe-container">
+      <iframe 
+        id="appFrame"
+        src="https://script.google.com/macros/s/AKfycbzahT0z2qJxBndVr-65a0LSDcj0rrcbo790wCohw25SEEshd6BEUW22D8AwrWXNl3TZ/exec"
+        allow="geolocation; microphone; camera; payment; autoplay; encrypted-media"
+        allowfullscreen="true"
+        webkitallowfullscreen="true"
+        mozallowfullscreen="true">
+      </iframe>
+    </div>
+    
+  </div>
+
+  <script>
+    // ========== OCULTAR LOADING CUANDO CARGA EL IFRAME ==========
+    const iframe = document.getElementById('appFrame');
+    const loading = document.getElementById('loadingOverlay');
+    
+    // Ocultar loading cuando el iframe termina de cargar
+    iframe.addEventListener('load', function() {
+      setTimeout(function() {
+        loading.classList.add('hidden');
+      }, 500);
+    });
+    
+    // Fallback: ocultar después de 5 segundos si no carga
+    setTimeout(function() {
+      loading.classList.add('hidden');
+    }, 5000);
+    
+    // ========== FORZAR PANTALLA COMPLETA EN MÓVIL ==========
+    // iOS: cuando está en modo standalone, ocultar la barra
+    if (window.navigator.standalone) {
+      document.documentElement.style.height = '100vh';
+      document.documentElement.style.overflow = 'hidden';
+    }
+    
+    // Android: scroll para ocultar barra de dirección
+    window.addEventListener('load', function() {
+      setTimeout(function() {
+        window.scrollTo(0, 1);
+      }, 300);
+    });
+    
+    // ========== DETECTAR INSTALACIÓN PWA ==========
+    let deferredPrompt = null;
+    
+    window.addEventListener('beforeinstallprompt', function(e) {
+      e.preventDefault();
+      deferredPrompt = e;
+      console.log('✅ App lista para instalar');
+    });
+    
+    window.addEventListener('appinstalled', function() {
+      console.log('🎉 App instalada exitosamente');
+    });
+    
+    // ========== RECARGAR IFRAME SI SE PIERDE CONEXIÓN ==========
+    let reloadAttempts = 0;
+    const maxReloadAttempts = 3;
+    
+    iframe.addEventListener('error', function() {
+      if (reloadAttempts < maxReloadAttempts) {
+        reloadAttempts++;
+        setTimeout(function() {
+          iframe.src = iframe.src;
+        }, 2000);
       }
     });
-  });
-  
-  window.addEventListener('appinstalled', function() {
-    console.log('🎉 App instalada exitosamente');
-    document.getElementById('btnInstall').textContent = '✅ ¡Instalada!';
-    document.getElementById('btnInstall').style.background = '#2ecc71';
-  });
-</script>
-
+  </script>
 </body>
 </html>
