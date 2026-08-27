@@ -11,7 +11,7 @@
   <meta name="theme-color" content="#0f0c29">
   <meta name="apple-mobile-web-app-title" content="Tipazos">
   
-  <!-- ===== MANIFIESTO (ARCHIVO SEPARADO) ===== -->
+  <!-- ===== MANIFIESTO PARA PWA ===== -->
   <link rel="manifest" href="manifest.json">
   
   <title>🏆 Tipazos TCG</title>
@@ -202,7 +202,7 @@
     <div class="iframe-container">
       <iframe 
         id="appFrame"
-        src="https://script.google.com/macros/s/AKfycbw79wM5Ata8Y77GYKjtjl0kKVf7BBZQLYRtC62HDcDgKaoyIOScPpyLLSfmuhdb8gID/exec"
+        src="https://script.google.com/macros/s/AKfycbzYlyzGTzEG-21mvQVBgsgo4mQvFph-JOAsIEK_e5-A1sojKg4Nohbv0rujqOJy0IKT/exec"
         allow="geolocation; microphone; camera; payment; autoplay; encrypted-media"
         allowfullscreen="true"
         webkitallowfullscreen="true"
@@ -243,54 +243,10 @@
       e.preventDefault();
       deferredPrompt = e;
       console.log('✅ App lista para instalar');
-      
-      // Mostrar botón de instalación
-      const btnInstall = document.createElement('button');
-      btnInstall.textContent = '📲 Instalar App';
-      btnInstall.style.cssText = `
-        position: fixed;
-        bottom: 80px;
-        left: 50%;
-        transform: translateX(-50%);
-        background: #2ecc71;
-        color: white;
-        border: none;
-        padding: 14px 30px;
-        border-radius: 12px;
-        font-size: 16px;
-        font-weight: bold;
-        z-index: 9999;
-        box-shadow: 0 4px 20px rgba(46,204,113,0.4);
-        cursor: pointer;
-        animation: pulse 2s infinite;
-      `;
-      btnInstall.id = 'btnInstallPWA';
-      document.body.appendChild(btnInstall);
-      
-      btnInstall.addEventListener('click', function() {
-        if (deferredPrompt) {
-          deferredPrompt.prompt();
-          deferredPrompt.userChoice.then(function(result) {
-            if (result.outcome === 'accepted') {
-              console.log('✅ App instalada');
-            } else {
-              console.log('❌ Instalación cancelada');
-            }
-            deferredPrompt = null;
-            document.getElementById('btnInstallPWA').remove();
-          });
-        }
-      });
     });
     
     window.addEventListener('appinstalled', function() {
       console.log('🎉 App instalada exitosamente');
-      const btn = document.getElementById('btnInstallPWA');
-      if (btn) {
-        btn.textContent = '✅ ¡Instalada!';
-        btn.style.background = '#2ecc71';
-        setTimeout(function() { btn.remove(); }, 3000);
-      }
     });
     
     let reloadAttempts = 0;
